@@ -1,3 +1,4 @@
+#!/bin/bash
 source ./common.sh
 
 app-name=redis
