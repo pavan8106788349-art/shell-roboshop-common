@@ -41,20 +41,18 @@ nodejs_setup(){
     dnf install nodejs -y &>>$LOGS_FILE
     VALIDATE $? "Install NodeJS"
 
-    npm install  &>>$LOGS_FILE
+    npm install &>>$LOGS_FILE
     VALIDATE $? "Installing dependencies"
 }
 
 app_setup(){
-    id roboshop &>>$LOGS_FILE
-    if [ $? -ne 0 ]; then
-      useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOGS_FILE
-      VALIDATE $? "Creating system user"
+   id roboshop &>>$LOGS_FILE
+   if [ $? -ne 0 ]; then
+     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop &>>$LOGS_FILE
+     VALIDATE $? "Creating system user"
     else
-      echo -e "Roboshop user already exist ... $Y SKIPPING $N"
+     echo -e "Roboshop user already exist ... $Y SKIPPING $N"
     fi
-
-     #downloading the app
      mkdir -p /app 
      VALIDATE $? "Creating app directory"
 
