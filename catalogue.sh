@@ -9,14 +9,19 @@ nodejs_setup
 systemd_setup
 
 # Loading data into MongoDB
-cp $SCRIPT_DIR/mongo.repo /etc/yum.repos.d/mongo.repo
-dnf install mongodb-mongosh -y &>>$LOGS_FILE
+cp "$SCRIPT_DIR/mongo.repo" /etc/yum.repos.d/mongo.repo
+VALIDATE $? "Copying MongoDB repository"
 
-INDEX=$(mongosh --host $MONGODB_HOST --quiet  --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+dnf install mongodb-mongosh -y &>>"$LOGS_FILE"
+VALIDATE $? "Installing MongoDB Shell"
 
-if [ $INDEX -le 0 ]; then
-    mongosh --host $MONGODB_HOST </app/db/master-data.js
+INDEX=$(mongosh --host "$MONGODB_HOST" --quiet --eval 'db.getMongo().getDBNames().indexOf("catalogue")')
+
+if [ "$INDEX" -le 0 ]; then
+    mongosh --host "$MONGODB_HOST" < /app/db/master-data.js
     VALIDATE $? "Loading products"
 else
-    echo -e "$(date '+%Y-%m-%d %H:%M:%S") | "Products already loaded ... $Y SKIPPING $N"
+    echo -e "$(date '+%Y-%m-%d %H:%M:%S') | Products already loaded ... $Y SKIPPING $N"
 fi
+
+print_total_time
